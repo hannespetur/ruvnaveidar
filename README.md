@@ -1,6 +1,6 @@
 ## Rúvnaveiðar
 
-Rúvnaveiðar is a minimalist version of [https://github.com/sverrirs/ruvsarpur](RÚV Sarpur).
+Rúvnaveiðar is a minimalist version of [RÚV Sarpur](https://github.com/sverrirs/ruvsarpur). Consider using Rúvsarpur if you need additional functionality.
 
 ### Install
 
