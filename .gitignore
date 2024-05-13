@@ -1,4 +1,5 @@
 /blacklist.txt
+/whitelist.txt
 *.ts
 *.mp4
 *.json

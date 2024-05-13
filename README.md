@@ -21,8 +21,21 @@ pip install -r requirements.txt
 
 Add shows you would like to fetch from Rúv in a file named `whitelist.txt` (one show per line). Running the script will download all shows found
 
+1. Create `whitelist.txt`
+
 ```sh
-./ruvnaveidar.py
+$ cat whitelist.template.txt
+# Add shows you want to fetch from RÚV here, one per line
+# i.e.:
+Blæja
+Friðþjófur forvitni
+Hvolpasveitin
+$ mv whitelist.template.txt whitelist.txt # For demonstration
+```
+
+2. Run `ruvnaveidar`
+
+$ ./ruvnaveidar
 ```
 
 After downloading with streamlink the episodes you have will be added to `blacklist.txt`, which will ignore those episodes in future runs.
