@@ -91,9 +91,15 @@ if __name__ == '__main__':
         ep_num = str(episode['number']).zfill(2)
         out_fn = args.output + '/' + title
         out_fn += ' - S{}E{} - {}.ts'.format(season_num, ep_num, episode['title'])
-        streamlink_cmd = ['streamlink','--quiet','--output', anyascii(out_fn), anyascii(episode['file']), 'best']
+
         if args.run:
-          print(" ".join(streamlink_cmd))
+          streamlink_cmd = ['streamlink',
+                            '--quiet',
+                            '--output',
+                            anyascii(out_fn),
+                            anyascii(episode['file']),
+                            'best']
+
           streamlink_ret = subprocess.run(streamlink_cmd)
 
           if streamlink_ret.returncode != 0:
@@ -103,4 +109,6 @@ if __name__ == '__main__':
           with open('blacklist.txt', 'a') as blacklist_f:
             print('{}-{}'.format(pid, eid), file = blacklist_f, end = '\n')
         else:
-          print(" ".join(streamlink_cmd) + ' && ' + " ".join(echo_cmd))
+          print('streamlink --quiet --output ', end = '')
+          print('"{}" {} best'.format(anyascii(out_fn), anyascii(episode['file'])), end = '')
+          print(' && echo {}-{} >> blacklist.txt'.format(pid, eid))
