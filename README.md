@@ -1,10 +1,10 @@
 ## Rúvnaveiðar
 
-Rúvnaveiðar is a minimalist version of [RÚV Sarpur](https://github.com/sverrirs/ruvsarpur). Consider using Rúvsarpur if you need additional functionality.
+Rúvnaveiðar is a minimalist downloader for RÚV VODs for Linux, Mac and Windows. It is a faster version of [RÚV Sarpur](https://github.com/sverrirs/ruvsarpur) but has much more limited set of features and customization. Consider using Rúvsarpur if you need additional functionality.
 
 ### Install
 
-Clone the repository
+Download the Github ZIP file or clone the repository
 
 ```sh
 git clone https://github.com/hannespetur/ruvnaveidar
