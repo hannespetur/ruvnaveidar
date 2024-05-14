@@ -6,13 +6,16 @@ import json
 import os
 from ruvnaveidar_utils import *
 import sys
+import subprocess
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
 
   parser.add_argument('-l', '--list', help = 'Only list all RÚV programs.', action = 'store_true')
   parser.add_argument('-o', '--output', help = 'Output directory for downloads.', default = 'out')
-  parser.add_argument('-v', '--verbose', action = 'store_true')
+  parser.add_argument('-r', '--run', help = 'Set to run commands (by default, commands are printed)',
+                      action = 'store_true')
+  parser.add_argument('-v', '--verbose', help = 'Set to print more verbose messages', action = 'store_true')
 
   args = parser.parse_args()
 
@@ -73,7 +76,7 @@ if __name__ == '__main__':
     for program in p_data:
       season_num = get_season_number_suffix(panel['title'])
 
-      if "foreign_title" in program and len(program['foreign_title']) > 0:
+      if "foreign_title" in program and program['foreign_title']:
         title = trim_season_number_suffix(program['foreign_title'])
       else:
         title = p_title
@@ -88,6 +91,16 @@ if __name__ == '__main__':
         ep_num = str(episode['number']).zfill(2)
         out_fn = args.output + '/' + title
         out_fn += ' - S{}E{} - {}.ts'.format(season_num, ep_num, episode['title'])
-        cmd = 'streamlink --output "{}" {} best'.format(out_fn, episode['file'])
-        cmd +=  ' && echo {}-{} >> blacklist.txt'.format(pid, eid)
-        print(anyascii(cmd))
+        streamlink_cmd = ['streamlink','--quiet','--output', anyascii(out_fn), anyascii(episode['file']), 'best']
+        if args.run:
+          print(" ".join(streamlink_cmd))
+          streamlink_ret = subprocess.run(streamlink_cmd)
+
+          if streamlink_ret.returncode != 0:
+            raise Exception("ERROR: streamlink command: " + " ".join(streamlink_cmd) +
+                            "failed with message:\n{}".format(streamlink_ret.stderr))
+
+          with open('blacklist.txt', 'a') as blacklist_f:
+            print('{}-{}'.format(pid, eid), file = blacklist_f, end = '\n')
+        else:
+          print(" ".join(streamlink_cmd) + ' && ' + " ".join(echo_cmd))

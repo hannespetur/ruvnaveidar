@@ -1,5 +1,0 @@
-# Add shows you want to fetch from RÚV here, one per line
-# i.e.:
-Blæja
-Friðþjófur forvitni
-Hvolpasveitin

@@ -33,9 +33,16 @@ Hvolpasveitin
 $ mv whitelist.template.txt whitelist.txt # For demonstration
 ```
 
-2. Run `ruvnaveidar`
+2. (optional) Run `ruvnaveidar` to list the all the episodes found.
 
-$ ./ruvnaveidar
+```sh
+$ python ruvnaveidar
+```
+
+3. If you want to fetch these episodes, run
+
+```sh
+$ python ruvnaveidar --run
 ```
 
 After downloading with streamlink the episodes you have will be added to `blacklist.txt`, which will ignore those episodes in future runs.
