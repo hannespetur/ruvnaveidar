@@ -18,15 +18,15 @@ if __name__ == '__main__':
   parser.add_argument('-v', '--verbose', help = 'Set to print more verbose messages', action = 'store_true')
 
   args = parser.parse_args()
-
-  api_data = fetch_programs()
+  pid2fix = read_pid2fix('pid2fix.tsv')
+  blacklist = read_file_list('blacklist.txt')
   whitelist = list(read_file_list('whitelist.txt'))
 
   if len(whitelist) == 0:
     print("WARNING: Did not find any shows to fetch in 'whitelist.txt'. See README for more details.")
     sys.exit()
 
-  blacklist = read_file_list('blacklist.txt')
+  api_data = fetch_programs()
   seen_pids = set() # Note which programs have been checked
 
   if not os.path.exists(args.output):
@@ -74,15 +74,21 @@ if __name__ == '__main__':
     p_data = p_data if isinstance(p_data, list) else [p_data]
 
     for program in p_data:
-      season_num = get_season_number_suffix(panel['title'])
-
-      if season_num == '99':
-        season_num = str(pid)
-
-      if "foreign_title" in program and program['foreign_title']:
-        title = trim_season_number_suffix(program['foreign_title'])
+      #print(pid, p_title)
+      if str(pid) in pid2fix:
+        #print("DEBUG1!", pid2fix[str(pid)])
+        title_with_season = pid2fix[str(pid)]
       else:
-        title = p_title
+        #print("DEBUG1!", str(pid))
+        season_num = get_season_number_suffix(panel['title'])
+
+        if season_num == '99':
+          season_num = str(pid)
+
+        if "foreign_title" in program and program['foreign_title']:
+          title_with_season = trim_season_number_suffix(program['foreign_title']) + ' S' + season_num
+        else:
+          title_with_season = p_title + ' S' + season_num
 
       for episode in program['episodes']:
         eid = episode['id']
@@ -92,8 +98,8 @@ if __name__ == '__main__':
           continue
 
         ep_num = str(episode['number']).zfill(2)
-        out_fn = args.output + '/' + title
-        out_fn += ' - S{}E{} - {}.ts'.format(season_num, ep_num, episode['title'])
+        out_fn = args.output + '/' + title_with_season
+        out_fn += 'E{} - {}.ts'.format(ep_num, episode['title'])
 
         if args.run:
           streamlink_cmd = ['streamlink',

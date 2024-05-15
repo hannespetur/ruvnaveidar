@@ -76,8 +76,8 @@ def is_title_in_list(whitelist, title):
   return False
 
 
-## stores each line of a file in a set
 def read_file_list(fn):
+  """Stores each line of a file in a set"""
   s = set()
 
   if os.path.exists(fn):
@@ -88,8 +88,65 @@ def read_file_list(fn):
 
   return s
 
-## Fetch all RÚV programs
+
+def read_pid2fix(fn):
+  """
+  Reads a file containing a program ID (pid) and a fixed program name (title), including the season (S0X) and,
+  makes a dict.
+
+  The pid and title both strings and should be separated with a TAB ("\t"):
+
+  Example:
+  34298\tSmástund S02
+  34233\tCurious George (2006) S04
+  """
+  d = dict()
+
+  if os.path.exists(fn):
+    with open(fn, 'r', encoding='utf-8') as f:
+      for line in f:
+        if line.startswith('#'):
+          continue
+
+        split_line = line.split('\t')
+
+        if len(split_line) != 2:
+          print("WARNING: Skipping a pid2fix line with {} fields".format(len(split_line)))
+          continue
+
+        d[split_line[0]] = split_line[1].rstrip()
+
+  return d
+
 def fetch_programs():
+  """
+  Fetches a list all RÚV programs.
+
+  Fetched data is a program list where each program contains information about TV shows/movies available. It
+  does not contain any information about which episodes are available, that data is requested later. Each
+  program MAY have the following fields (needs to be checked):
+   * id: Program ID (pid)
+   * title: Title of the program
+   * format: radio or tv
+   * channel: i.e. RÚV, Rás 2
+   * foreign_title
+   * slug
+   * image
+   * portrait_image
+   * description
+   * short_description
+   * categories
+   * multiple_episodes
+   * vod_available_episodes
+   * web_available_episodes
+   * podcast_available_episodes
+   * web_latest_date
+   * episodes
+   * podcast
+   * last_updated
+   * panels
+   * reverse_episode_order
+  """
   ruv_api_url_all = 'https://api.ruv.is/api/programs/all'
   ruv_api_url_featured = 'https://api.ruv.is/api/programs/featured/tv'
   api_data = None
