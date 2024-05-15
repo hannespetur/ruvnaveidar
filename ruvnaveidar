@@ -76,6 +76,9 @@ if __name__ == '__main__':
     for program in p_data:
       season_num = get_season_number_suffix(panel['title'])
 
+      if season_num == '99':
+        season_num = str(pid)
+
       if "foreign_title" in program and program['foreign_title']:
         title = trim_season_number_suffix(program['foreign_title'])
       else:
