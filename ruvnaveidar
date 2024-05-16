@@ -99,13 +99,14 @@ if __name__ == '__main__':
 
         ep_num = str(episode['number']).zfill(2)
         out_fn = args.output + '/' + title_with_season
-        out_fn += 'E{} - {}.ts'.format(ep_num, episode['title'])
+        out_fn += 'E{} - {}'.format(ep_num, episode['title'])
+        out_fn = anyascii(out_fn)
 
         if args.run:
           streamlink_cmd = ['streamlink',
                             '--quiet',
                             '--output',
-                            anyascii(out_fn),
+                            out_fn + '.ts',
                             anyascii(episode['file']),
                             'best']
 
@@ -115,9 +116,23 @@ if __name__ == '__main__':
             raise Exception("ERROR: streamlink command: " + " ".join(streamlink_cmd) +
                             "failed with message:\n{}".format(streamlink_ret.stderr))
 
+          if os.path.exists('ffmpeg_cmd.txt'):
+            with open('ffmpeg_cmd.txt') as ffmpeg_f:
+              for line in ffmpeg_f:
+                ffmpeg_cmd = line.rstrip().split(" ")
+                
+              ffmpeg_cmd[ffmpeg_cmd.index('{input}')] = out_fn + '.ts'
+              ffmpeg_cmd[ffmpeg_cmd.index('{output}')] = out_fn + '.mp4'
+			  
+          ffmpeg_ret = subprocess.run(ffmpeg_cmd)
+
+          if ffmpeg_ret.returncode != 0:
+            raise Exception("ERROR: ffmpeg command: " + " ".join(ffmpeg_cmd) +
+                            "failed with message:\n{}".format(ffmpeg_ret.stderr))
+
           with open('blacklist.txt', 'a') as blacklist_f:
             print('{}-{}'.format(pid, eid), file = blacklist_f, end = '\n')
         else:
           print('streamlink --quiet --output ', end = '')
-          print('"{}" {} best'.format(anyascii(out_fn), anyascii(episode['file'])), end = '')
+          print('"{}" {} best'.format(out_fn + '.ts', anyascii(episode['file'])), end = '')
           print(' && echo {}-{} >> blacklist.txt'.format(pid, eid))
