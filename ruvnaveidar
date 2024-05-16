@@ -120,15 +120,15 @@ if __name__ == '__main__':
             with open('ffmpeg_cmd.txt') as ffmpeg_f:
               for line in ffmpeg_f:
                 ffmpeg_cmd = line.rstrip().split(" ")
-                
+
               ffmpeg_cmd[ffmpeg_cmd.index('{input}')] = out_fn + '.ts'
               ffmpeg_cmd[ffmpeg_cmd.index('{output}')] = out_fn + '.mp4'
-			  
-          ffmpeg_ret = subprocess.run(ffmpeg_cmd)
 
-          if ffmpeg_ret.returncode != 0:
-            raise Exception("ERROR: ffmpeg command: " + " ".join(ffmpeg_cmd) +
-                            "failed with message:\n{}".format(ffmpeg_ret.stderr))
+            ffmpeg_ret = subprocess.run(ffmpeg_cmd)
+
+            if ffmpeg_ret.returncode != 0:
+              raise Exception("ERROR: ffmpeg command: " + " ".join(ffmpeg_cmd) +
+                              "failed with message:\n{}".format(ffmpeg_ret.stderr))
 
           with open('blacklist.txt', 'a') as blacklist_f:
             print('{}-{}'.format(pid, eid), file = blacklist_f, end = '\n')
