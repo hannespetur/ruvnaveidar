@@ -130,6 +130,8 @@ if __name__ == '__main__':
               raise Exception("ERROR: ffmpeg command: " + " ".join(ffmpeg_cmd) +
                               "failed with message:\n{}".format(ffmpeg_ret.stderr))
 
+            os.remove(out_fn + '.ts')
+
           with open('blacklist.txt', 'a') as blacklist_f:
             print('{}-{}'.format(pid, eid), file = blacklist_f, end = '\n')
         else:
