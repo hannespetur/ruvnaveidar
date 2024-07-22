@@ -122,7 +122,7 @@ if __name__ == '__main__':
                 ffmpeg_cmd = line.rstrip().split(" ")
 
               ffmpeg_cmd[ffmpeg_cmd.index('{input}')] = out_fn + '.ts'
-              ffmpeg_cmd[ffmpeg_cmd.index('{output}')] = out_fn + '.mp4'
+              ffmpeg_cmd[ffmpeg_cmd.index('{output}')] = out_fn + '.mp4.incomplete'
 
             ffmpeg_ret = subprocess.run(ffmpeg_cmd)
 
@@ -130,6 +130,7 @@ if __name__ == '__main__':
               raise Exception("ERROR: ffmpeg command: " + " ".join(ffmpeg_cmd) +
                               "failed with message:\n{}".format(ffmpeg_ret.stderr))
 
+            os.rename(out_fn + '.mp4.incomplete', out_fn + '.mp4')
             os.remove(out_fn + '.ts')
 
           with open('blacklist.txt', 'a') as blacklist_f:
