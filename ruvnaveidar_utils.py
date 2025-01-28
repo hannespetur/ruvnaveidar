@@ -147,28 +147,24 @@ def fetch_programs():
    * panels
    * reverse_episode_order
   """
-  ruv_api_url_all = 'https://api.ruv.is/api/programs/all'
   ruv_api_url_featured = 'https://api.ruv.is/api/programs/featured/tv'
   api_data = None
-
-  r = get_url(ruv_api_url_all)
-
-  try:
-    api_data = r.json()
-  except:
-    print('ERROR: Failed reading JSON data from RÚV for all programs (old API)')
-    raise
 
   r = get_url(ruv_api_url_featured)
 
   try:
-    api_data2 = r.json()['panels']
+    api_data = r.json()
   except:
     print('ERROR: Failed reading JSON data from RÚV for all programs (new API)')
     raise
 
-  for panel_data in api_data2:
+  all_panel_data = api_data['panels'] if 'panels' in api_data else None  
+  data = []
+  
+  for panel_data in all_panel_data:
     if 'programs' in panel_data:
-      api_data.extend(panel_data['programs'])
-
-  return api_data
+      data.extend(panel_data['programs'])
+  
+  data = list({item['id']:item for item in data}.values())
+  
+  return data
